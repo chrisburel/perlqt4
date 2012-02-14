@@ -9,16 +9,14 @@ set(USE_BUILD_DIR_FOR_TESTS OFF CACHE BOOL "Use to toggle between using the buil
 find_package(Perl REQUIRED)
 find_package(PerlLibs REQUIRED)
 find_package(Qt4 REQUIRED)
-find_package(Smoke QUIET COMPONENTS QtCore)
+find_package(Smoke QUIET COMPONENTS QtCore QtGui QtNetwork Qt3Support
+    QtDeclarative QtDBus QtHelp QtMultimedia QtOpenGl QtScript QtSql QtSvg
+    QtTest QtUiTools QtWebKit QtXml QtXmlPatterns Phonon Qwt QSci QImageBlitz)
 
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 if(SMOKE_QTCORE_FOUND)
-    find_package(Smoke COMPONENTS QtCore QtGui QtNetwork Qt3Support
-        QtDeclarative QtDBus QtHelp QtMultimedia QtOpenGl QtScript QtSql QtSvg
-        QtTest QtUiTools QtWebKit QtXml QtXmlPatterns Phonon Qwt QSci
-        QImageBlitz)
                               
     include_directories(${SMOKE_INCLUDE_DIR})
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMOKE_CMAKE_MODULE_DIR})
@@ -27,14 +25,36 @@ if(SMOKE_QTCORE_FOUND)
 
     set(SMOKE_PFX "SMOKE")
 
+    set(QIMAGEBLITZ_FOUND SMOKE_QIMAGEBLITZ_FOUND)
+
 else()
+    message("System-installed SmokeQt not found.  Building it as well.")
     set(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/smokegen/cmake
         ${CMAKE_CURRENT_SOURCE_DIR}/smokeqt/cmake)
     set(SMOKE_GEN_BIN smokegen)
-    set(SMOKE_BASE_LIBRARY smokebase)
-    set(SMOKE_QTCORE_LIBRARY smokeqtcore)
+    set(SMOKE_GEN_LIB generator_smoke)
+    set(SMOKE_BASE_LIBRARY          smokebase)
+    set(SMOKE_QTCORE_LIBRARY        smokeqtcore)
+    set(SMOKE_QTGUI_LIBRARY         smokeqtgui)
+    set(SMOKE_PHONON_LIBRARY        smokephonon)
+    set(SMOKE_QIMAGEBLITZ_LIBRARY   smokeqimageblitz)
+    set(SMOKE_QT3SUPPORT_LIBRARY    smokeqt3support)
+    set(SMOKE_QTDBUS_LIBRARY        smokeqtdbus)
+    set(SMOKE_QTDECLARATIVE_LIBRARY smokeqtdeclarative)
+    set(SMOKE_QTHELP_LIBRARY        smokeqthelp)
+    set(SMOKE_QTMULTIMEDIA_LIBRARY  smokeqtmultimedia)
+    set(SMOKE_QTNETWORK_LIBRARY     smokeqtnetwork)
+    set(SMOKE_QTOPENGL_LIBRARY      smokeqtopengl)
+    set(SMOKE_QTSCRIPT_LIBRARY      smokeqtscript)
+    set(SMOKE_QTSQL_LIBRARY         smokeqtsql)
+    set(SMOKE_QTSVG_LIBRARY         smokeqtsvg)
+    set(SMOKE_QTTEST_LIBRARY        smokeqttest)
+    set(SMOKE_QTUITOOLS_LIBRARY     smokeqtuitools)
+    set(SMOKE_QTWEBKIT_LIBRARY      smokeqtwebkit)
+    set(SMOKE_QTXMLPATTERNS_LIBRARY smokeqtxmlpatterns)
+    set(SMOKE_QTXML_LIBRARY         smokeqtxml)
 
     add_subdirectory(smokegen)
     set(SMOKE_GEN_BIN smokegen)
@@ -113,7 +133,7 @@ macro_optional_add_bindings(QSCINTILLA_FOUND "QScintilla" qsci)
 
 macro_optional_add_bindings(Qwt5_Qt4_FOUND "Qwt" qwt)
 
-macro_optional_add_bindings(${SMOKE_PFX}_QIMAGEBLITZ_FOUND "QImageBlitz" qimageblitz)
+macro_optional_add_bindings(QIMAGEBLITZ_FOUND "QImageBlitz" qimageblitz)
 
 macro_display_bindings_log()
 
