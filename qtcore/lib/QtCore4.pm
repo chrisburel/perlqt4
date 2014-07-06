@@ -1301,12 +1301,15 @@ sub init_class {
 
     foreach my $sp ('', ' ') {
         my $where = $sp . $perlClassName;
-        installautoload($where);
-        # Putting this in one package gives XS_AUTOLOAD one spot to look for
-        # the autoload variable
-        package Qt::AutoLoad;
-        my $autosub = \&{$where . '::_UTOLOAD'};
-        Qt::_internal::installSub( $where.'::AUTOLOAD', sub{&$autosub} );
+
+        if (!exists &{$where . '::AUTOLOAD'}) {
+            installautoload($where);
+            # Putting this in one package gives XS_AUTOLOAD one spot to look for
+            # the autoload variable
+            package Qt::AutoLoad;
+            my $autosub = \&{$where . '::_UTOLOAD'};
+            Qt::_internal::installSub( $where.'::AUTOLOAD', sub{&$autosub} );
+        }
     }
 
     installSub("$perlClassName\::NEW", sub {
@@ -1417,9 +1420,9 @@ sub makeMetaData {
     my $signals = $meta->{signals};
     my $slots = $meta->{slots};
 
-    @{$classinfos} = () if !defined @{$classinfos};
-    @{$signals} = () if !defined @{$signals};
-    @{$slots} = () if !defined @{$slots};
+    @{$classinfos} = () if !defined $classinfos;
+    @{$signals} = () if !defined $signals;
+    @{$slots} = () if !defined $slots;
 
     # Each entry in 'stringdata' corresponds to a string in the
     # qt_meta_stringdata_<classname> structure.
@@ -1646,6 +1649,8 @@ package Qt;
 use strict;
 use warnings;
 
+use Scalar::Util;
+
 # Called in the DESTROY method for all QObjects to see if they still have a
 # parent, and avoid deleting them if they do.
 sub Qt::Object::ON_DESTROY {
@@ -1805,67 +1810,91 @@ Qt::_internal::installSub(' Qt::Variant::value', sub {
 });
 
 sub String {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::String';
+        }
         return bless \shift, 'Qt::String';
-    } else {
-        return bless '', 'Qt::String';
     }
+    return bless '', 'Qt::String';
 }
 
 sub CString {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::CString';
+        }
         return bless \shift, 'Qt::CString';
-    } else {
-        return bless '', 'Qt::CString';
     }
+    return bless '', 'Qt::CString';
 }
 
 sub Int {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::Int';
+        }
         return bless \shift, 'Qt::Int';
-    } else {
-        return bless '', 'Qt::Int';
     }
+    return bless '', 'Qt::Int';
 }
 
 sub Uint {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::Uint';
+        }
         return bless \shift, 'Qt::Uint';
-    } else {
-        return bless '', 'Qt::Uint';
     }
+    return bless '', 'Qt::Uint';
 }
 
 sub Bool {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::Bool';
+        }
         return bless \shift, 'Qt::Bool';
-    } else {
-        return bless '', 'Qt::Bool';
     }
+    return bless '', 'Qt::Bool';
 }
 
 sub Short {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::Short';
+        }
         return bless \shift, 'Qt::Short';
-    } else {
-        return bless '', 'Qt::Short';
     }
+    return bless '', 'Qt::Short';
 }
 
 sub Ushort {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::Ushort';
+        }
         return bless \shift, 'Qt::Ushort';
-    } else {
-        return bless '', 'Qt::Ushort';
     }
+    return bless '', 'Qt::Ushort';
 }
 
 sub Uchar {
-    if ( @_ ) {
+    if ( scalar @_ ) {
+        if ( Scalar::Util::readonly( $_[0] ) ) {
+            my $val = shift;
+            return bless \$val, 'Qt::Uchar';
+        }
         return bless \shift, 'Qt::Uchar';
-    } else {
-        return bless '', 'Qt::Uchar';
     }
+    return bless '', 'Qt::Uchar';
 }
 
 1;
