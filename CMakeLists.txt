@@ -72,23 +72,25 @@ include(MacroLogFeature)
 include(MacroProve)
 
 macro_optional_find_package(QScintilla)
-macro_log_feature(QSCINTILLA_FOUND "QScintilla2" "QScintilla2 libraries" "http://www.riverbankcomputing.co.uk/software/qscintilla/intro" FALSE "" "Needed to compile QScintilla2 bindings")
+macro_log_feature(SMOKE_QSCI_FOUND "QScintilla2" "QScintilla2 libraries" "http://www.riverbankcomputing.co.uk/software/qscintilla/intro" FALSE "" "Needed to compile QScintilla2 bindings")
 
 macro_optional_find_package(QImageBlitz)
-macro_log_feature(QIMAGEBLITZ_FOUND "QImageBlitz" "QImageBlitz library" "http://www.kde.org" FALSE "" "Needed to compile QImageBlitz bindings")
+macro_log_feature(SMOKE_QIMAGEBLITZ_FOUND "QImageBlitz" "QImageBlitz library" "http://www.kde.org" FALSE "" "Needed to compile QImageBlitz bindings")
 
 macro_optional_find_package(Phonon)
-macro_log_feature(PHONON_FOUND "Phonon" "Phonon multimedia framework" "http://www.kde.org" FALSE "" "Needed to compile Phonon bindings")
+macro_log_feature(SMOKE_PHONON_FOUND "Phonon" "Phonon multimedia framework" "http://www.kde.org" FALSE "" "Needed to compile Phonon bindings")
 
 macro_optional_find_package(Qwt5)
-macro_log_feature(Qwt5_Qt4_FOUND "Qwt5 for Qt4" "Qwt5 libraries for Qt4" "http://qwt.sourceforge.net" FALSE "" "Needed to compile Qwt5 bindings")
+macro_log_feature(SMOKE_QWT_FOUND "Qwt5 for Qt4" "Qwt5 libraries for Qt4" "http://qwt.sourceforge.net" FALSE "" "Needed to compile Qwt5 bindings")
 
 add_definitions(-DDEBUG)
 
 include (FindPerlMore)
 string(LENGTH "${PERL_INSTALL_PREFIX}" PERL_INSTALL_PREFIX_LEN)
 math(EXPR PERL_INSTALL_PREFIX_LEN "${PERL_INSTALL_PREFIX_LEN}+1")
-string(SUBSTRING ${PERL_SITE_ARCH_DIR} ${PERL_INSTALL_PREFIX_LEN} -1 CUSTOM_PERL_SITE_ARCH_DIR)
+string(LENGTH "${PERL_SITE_ARCH_DIR}" PERL_SITE_ARCH_DIR_LEN)
+math(EXPR CUSTOM_PERL_SITE_ARCH_DIR_SUBSTRING_LEN "${PERL_SITE_ARCH_DIR_LEN}-${PERL_INSTALL_PREFIX_LEN}")
+string(SUBSTRING ${PERL_SITE_ARCH_DIR} ${PERL_INSTALL_PREFIX_LEN} ${CUSTOM_PERL_SITE_ARCH_DIR_SUBSTRING_LEN} CUSTOM_PERL_SITE_ARCH_DIR)
 file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}/${CUSTOM_PERL_SITE_ARCH_DIR}" CUSTOM_PERL_SITE_ARCH_DIR)
 set(CUSTOM_PERL_SITE_ARCH_DIR ${CUSTOM_PERL_SITE_ARCH_DIR} CACHE DIR "Custom installation directory for perl binary extension")
 
@@ -133,9 +135,9 @@ macro_optional_add_bindings(${SMOKE_PFX}_QTXMLPATTERNS_FOUND "QtXmlPatterns" qtx
 
 macro_optional_add_bindings(${SMOKE_PFX}_PHONON_FOUND "Phonon" phonon)
 
-macro_optional_add_bindings(QSCINTILLA_FOUND "QScintilla" qsci)
+macro_optional_add_bindings(SMOKE_QCI_FOUND "QScintilla" qsci)
 
-macro_optional_add_bindings(Qwt5_Qt4_FOUND "Qwt" qwt)
+macro_optional_add_bindings(SMOKE_QWT_FOUND "Qwt" qwt)
 
 macro_optional_add_bindings(QIMAGEBLITZ_FOUND "QImageBlitz" qimageblitz)
 
